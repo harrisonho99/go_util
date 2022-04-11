@@ -1,4 +1,4 @@
-package main
+package use_watch_file
 
 import (
 	"fmt"
@@ -13,7 +13,7 @@ import (
 const filename1 = "watch_file.txt"
 const filename2 = "event.txt"
 
-func useWatchFile() {
+func UseWatchFile() {
 	dir, err := directory.GetCurrentDir()
 	util.CheckErrorAndPanic(err)
 	filepath1 := path.Join(dir, "test", filename1)

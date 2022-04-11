@@ -3,6 +3,7 @@ package sync_test
 import (
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"testing"
 	"time"
@@ -58,7 +59,7 @@ func TestWaiter1(t *testing.T) {
 	t.Log("Wait Done.")
 }
 
-func TestWaiterShouldDeadlock(t *testing.T) {
+func ExampleWaiterShouldDeadlock(t *testing.T) {
 
 	var w sync.Waiter
 
@@ -74,7 +75,7 @@ func TestWaiterShouldDeadlock(t *testing.T) {
 	t.Log("Wait Done.")
 }
 
-func TestWaiterShouldErrror(t *testing.T) {
+func ExampleWaiterShouldError() {
 
 	var w sync.Waiter
 
@@ -82,10 +83,19 @@ func TestWaiterShouldErrror(t *testing.T) {
 	for _, url := range ListURL {
 		go func(url string) {
 			defer w.Done()
-			fmt.Println("received: ", MockHTTPGet(url, t), " bytes")
+			resp, err := http.Get(url)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			nBytes, err := io.ReadAll(resp.Body)
+			if err != nil {
+				log.Fatal(err)
+			}
+			fmt.Println("received: ", len(nBytes), " bytes")
 		}(url)
 	}
 	w.Wait()
 	time.Sleep(time.Second * 2)
-	t.Log("Wait Done.")
+	log.Println("Wait Done.")
 }
